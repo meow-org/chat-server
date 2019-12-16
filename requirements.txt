@@ -1,0 +1,14 @@
+werkzeug
+Flask
+flask-sqlalchemy
+flask-migrate
+flask-bcrypt
+flask_login
+flask_expects_json
+flask_socketio
+psycopg2
+eventlet
+Flask-Mail
+Flask-Testing
+gunicorn
+flask-cors

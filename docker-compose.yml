@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    image: "postgres:9.6.5"
+    volumes:
+      - "dbdata:/var/lib/postgresql/data"
+    env_file:
+      - env_file
+  flaskapp:
+    build: .
+    env_file:
+      - env_file
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/opt/services/flaskapp/src
+    depends_on:
+      - db
+volumes:
+  dbdata:
