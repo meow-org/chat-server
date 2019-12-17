@@ -12,3 +12,4 @@ Flask-Mail
 Flask-Testing
 gunicorn
 flask-cors
+flask_script
