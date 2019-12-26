@@ -15,6 +15,7 @@ login = LoginManager(app)
 migrate = Migrate()
 
 """
+
 In the development mode, the frontend is located in 
 another server. Therefore, enable 
 Cross-Origin Resource Sharing 
