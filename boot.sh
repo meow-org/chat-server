@@ -1,3 +1,3 @@
 #!/bin/bash
 ping
-gunicorn -b :5000 --timeout 300 --reload --access-logfile - --error-logfile - wsgi:app
+gunicorn -b :5000 -k gevent -w 1 --reload --timeout 300 --access-logfile - --error-logfile - wsgi:app

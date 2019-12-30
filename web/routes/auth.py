@@ -1,50 +1,49 @@
-from flask import request, jsonify, Blueprint
-from flask_expects_json import expects_json
+from flask import request, jsonify, Blueprint, session
 from flask_login import login_user, logout_user, current_user
-from ..utils.schemas import login as login_schema, register as register_schema
-from ..models.users import User, db
-from ..utils.mail import send_email
+from ..utils.schemas import login as login_schema, register as register_schema, change_pass as change_pass_schema
+from ..utils.json_validate import json_validate
+from ..models import User, db
+from ..utils.mail import send_email_change_pass, send_registration_email
 from random import getrandbits
 from smtplib import SMTPException
-
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 
 @bp.route('/login', methods=['POST'])
-@expects_json(login_schema)
+@json_validate(login_schema)
 def login():
     if current_user.is_authenticated:
         return jsonify(success=True)
     form = request.json
-    user = User.query.filter_by(username=form['username']).first()
+    user = User.query.filter_by(email=form['email']).first()
     if user is None or not user.check_password(form['password']):
-        return jsonify(message='Invalid username or password')
-    login_user(user)
-    return jsonify(success=True, redirect='/')
+        return jsonify(message='Invalid username or password'), 400
+    login_user(user, remember=True)
+    return jsonify(success=True)
 
 
 @bp.route('/logout')
 def logout():
     logout_user()
-    return jsonify(success=True, redirect='/login')
+    return jsonify(success=True)
 
 
 @bp.route('/registration', methods=['POST'])
-@expects_json(register_schema)
+@json_validate(register_schema)
 def register():
     if current_user.is_authenticated:
         return jsonify(message='User already exist'), 401
     form = request.json
     email_token = getrandbits(128)
     try:
-        send_email(
+        send_registration_email(
             to=form['email'],
             email_token=email_token,
             subject=form['username']
         )
     except SMTPException:
-        return jsonify(message='Something went wrong'), 500
+        return jsonify(message='Something went wrong for sent email'), 512
 
     user = User(
         username=form['username'],
@@ -60,14 +59,31 @@ def register():
 
 @bp.route('/validate-email', methods=['POST'])
 def check_mail():
-    data = request.json()
-    email_token = data.email_token
+    data = request.json
+    email_token = data['email_token']
+
     user = User.query.filter_by(email_token=email_token).first()
     if user is None or not user.check_email_token(user.email_token):
-        return jsonify(message="Invalid token"), 400
-    user.set_approve_email()
+        return jsonify(message="Invalid email token"), 400
+    user.approve_email()
     db.session.add(user)
     db.session.commit()
-    return jsonify(success=True, redirect='/login')
+    return jsonify(success=True)
 
 
+@bp.route('/change-password', methods=['POST'])
+@json_validate(change_pass_schema)
+def change_password():
+    data = request.json()
+    user = User.query.filter_by(email=data['email']).first()
+    if user is None:
+        return jsonify(message="Email does not exist"), 400
+    try:
+        send_email_change_pass(
+            to=data['email'],
+            email_token=user.email_token,
+            subject=user.username
+        )
+    except SMTPException:
+        return jsonify(message='Something went wrong'), 500
+    return jsonify(success=True)
