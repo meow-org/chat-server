@@ -17,7 +17,7 @@ To set up the project, place the env_file file containing the following fields:
 * MAIL_PORT=587
 * MAIL_USE_TLS=True
 * MAIL_USERNAME=YOUR NAME
-* MAIL_PASSWORD=XXXXXXXXklntbhktnrblkh
+* MAIL_PASSWORD=XXXXXXXX
 * FLASK_ENV=development
 ## Migration commands
 For migration to the server used [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) library.
