@@ -7,7 +7,6 @@ pwd = os.environ.get('POSTGRES_PASSWORD')
 db = os.environ.get('POSTGRES_DB')
 host = 'db'
 port = '5432'
-mail_sender = os.environ.get('MAIL_DEFAULT_SENDER')
 
 
 class Config:
@@ -21,4 +20,8 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     SERVER_NAME = os.environ.get('SERVER_NAME')
+
+
+class TestConf:
+    pass
 

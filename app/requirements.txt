@@ -5,6 +5,7 @@ flask-migrate
 flask-bcrypt
 flask_login
 flask_socketio
+flask-script
 psycopg2
 gevent
 Flask-Mail
@@ -13,3 +14,6 @@ gunicorn
 flask-cors
 jsonschema
 sqlalchemy
+Faker
+Flask-Testing
+coverage

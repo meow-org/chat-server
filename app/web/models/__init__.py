@@ -56,7 +56,7 @@ class Message(db.Model):
     text: str
 
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(80), nullable=False)
+    text = db.Column(db.String(128), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __init__(self, **kwargs):

@@ -6,4 +6,3 @@ RUN pip install -r requirements.txt
 COPY . /opt/services/flaskapp/src
 EXPOSE 5000
 USER root
-ENTRYPOINT ["bash", "./boot.sh"]

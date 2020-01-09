@@ -1,7 +1,20 @@
-from functools import wraps
+import functools
+from flask_socketio import disconnect
+from flask_login import current_user
+from jsonschema import validate, ValidationError
 from flask import request, g, abort
 
-from jsonschema import validate, ValidationError
+
+def authenticated_only(f):
+    @functools.wraps(f)
+    def wrapped(*args, **kwargs):
+        print('current_user', current_user.username)
+        if not current_user.is_authenticated:
+            disconnect()
+        else:
+            return f(*args, **kwargs)
+
+    return wrapped
 
 
 def json_validate(schema=None, force=False):
@@ -9,7 +22,7 @@ def json_validate(schema=None, force=False):
         schema = dict()
 
     def decorator(f):
-        @wraps(f)
+        @functools.wraps(f)
         def decorated_function(*args, **kwargs):
             data = request.get_json(force=force)
 
