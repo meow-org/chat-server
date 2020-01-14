@@ -1,16 +1,18 @@
 import unittest
 import coverage
-from flask_script import Manager
+from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
-from web import app, db
+from web import create_app, db, socketio
 from web.models import User, Message
 from faker import Faker
 
 fake = Faker()
 
+app = create_app()
+
 COV = coverage.coverage(
     branch=True,
-    include='web'
+    include='web/*'
 )
 COV.start()
 
@@ -49,10 +51,14 @@ def seed():
     db.session.commit()
 
 
-@manager.command
-def test():
-    tests = unittest.TestLoader().discover(start_dir='web', pattern="test_*.py")
-    result = unittest.TextTestRunner(verbosity=2).run(tests)
+def run_tests():
+    test = unittest.TestLoader().discover(start_dir='tests', pattern="test*.py")
+    result = unittest.TextTestRunner(verbosity=2).run(test)
+    return result
+
+
+def report():
+    result = run_tests()
     if result.wasSuccessful():
         COV.stop()
         COV.save()
@@ -66,8 +72,18 @@ def test():
 
 
 @manager.command
+def tests(option):
+    if option == 'report':
+        report()
+    elif option == 'all':
+        run_tests()
+    else:
+        print('invalid arguments')
+
+
+@manager.command
 def run():
-    app.run(host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000)
 
 
 if __name__ == '__main__':

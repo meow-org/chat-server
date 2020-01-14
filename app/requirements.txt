@@ -9,7 +9,6 @@ flask-script
 psycopg2
 gevent
 Flask-Mail
-Flask-Testing
 gunicorn
 flask-cors
 jsonschema

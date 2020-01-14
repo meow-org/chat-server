@@ -1,8 +1,8 @@
 FROM python:3
-RUN mkdir -p /opt/services/flaskapp/src
-COPY requirements.txt /opt/services/flaskapp/src/
-WORKDIR /opt/services/flaskapp/src
+RUN groupadd -r meow && useradd -m -r -g meow meow
+COPY requirements.txt /home/meow
+WORKDIR /home/meow
 RUN pip install -r requirements.txt
-COPY . /opt/services/flaskapp/src
+COPY . /home/meow
 EXPOSE 5000
-USER root
+USER meow

@@ -6,8 +6,9 @@ from ..models import User, db
 from ..utils.mail import send_email_change_pass, send_registration_email
 from random import getrandbits
 from smtplib import SMTPException
+from ..config import AUTH_URL_PREFIX
 
-bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+bp = Blueprint('auth', __name__, url_prefix=AUTH_URL_PREFIX)
 
 
 @bp.route('/login', methods=['POST'])

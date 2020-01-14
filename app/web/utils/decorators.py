@@ -32,9 +32,16 @@ def json_validate(schema=None, force=False):
             try:
                 validate(data, schema)
             except ValidationError as e:
+                if 'errors' in e.schema:
+                    for key, value in e.schema['errors'].items():
+                        if key == e.validator:
+                            return abort(400, value)
+
                 return abort(400, e.message)
 
             g.data = data
             return f(*args, **kwargs)
+
         return decorated_function
+
     return decorator

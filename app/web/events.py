@@ -8,7 +8,7 @@ socketio = SocketIO(engineio_logger=True)
 
 @socketio.on('messages', namespace='/websocket/chat')
 def text(message):
-    messageDb = Message(user_id=current_user.id, text=message)
-    db.session.add(messageDb)
+    message_db = Message(user_id=current_user.id, text=message)
+    db.session.add(message_db)
     db.session.commit()
     emit('messages', json.dumps({'username': current_user.username, 'text': message}))

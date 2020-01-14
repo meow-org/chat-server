@@ -5,10 +5,8 @@ from .models import db, bcrypt, login_manager
 from .routes import auth_bp, api_bp
 from .utils.mail import mail
 from .events import socketio
-from . import config
 
 app = Flask(__name__)
-app.config.from_object(Config)
 
 
 @app.route('/validate-email/<email_token>')
@@ -30,10 +28,15 @@ def bad_request(error):
 
 
 """init main application"""
-db.init_app(app)
-bcrypt.init_app(app)
-mail.init_app(app)
-socketio.init_app(app, cors_allowed_origins="*")
-app.register_blueprint(auth_bp)
-app.register_blueprint(api_bp)
-login_manager.init_app(app)
+
+
+def create_app(conf=Config):
+    app.config.from_object(conf)
+    db.init_app(app)
+    bcrypt.init_app(app)
+    mail.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(api_bp)
+    login_manager.init_app(app)
+    return app
