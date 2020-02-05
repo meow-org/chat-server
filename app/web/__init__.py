@@ -2,9 +2,9 @@ from flask import Flask, render_template, jsonify
 from werkzeug.exceptions import HTTPException
 from .config import Config
 from .models import db, bcrypt, login_manager
-from .routes import auth_bp, api_bp
+from .routes import auth_bp
 from .utils.mail import mail
-from .events import socketio
+from .events import socket_io
 
 app = Flask(__name__)
 
@@ -35,8 +35,7 @@ def create_app(conf=Config):
     db.init_app(app)
     bcrypt.init_app(app)
     mail.init_app(app)
-    socketio.init_app(app, cors_allowed_origins="*")
+    socket_io.init_app(app, cors_allowed_origins="*")
     app.register_blueprint(auth_bp)
-    app.register_blueprint(api_bp)
     login_manager.init_app(app)
     return app

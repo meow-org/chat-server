@@ -1,8 +1,9 @@
 import unittest
 import coverage
+import random
 from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
-from web import create_app, db, socketio
+from web import create_app, db, socket_io
 from web.models import User, Message
 from faker import Faker
 
@@ -23,31 +24,30 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def seed():
-    try:
-        db.session.query(Message).delete()
-        db.session.query(User).delete()
-        db.session.commit()
+    db.session.query(Message).delete()
+    db.session.query(User).delete()
+    db.session.commit()
 
-        for x in range(1, 20):
-            user = User(
-                username=fake.name(),
-                email='test{}@test.com'.format(x),
-                confirmed=True
-            )
-            user.set_password('test')
-            db.session.add(user)
+    for x in range(1, 60):
+        user = User(
+            username=fake.name(),
+            email='test{}@test.com'.format(x),
+            confirmed=True
+        )
+        user.set_password('test')
+        db.session.add(user)
 
-        users_id = db.session.query(User.id).all()
+    users_id = db.session.query(User.id).all()
 
-        for _ in range(5):
-            for dt in users_id:
+    for _ in range(5):
+        for first_user in users_id:
+            for second_user in users_id:
                 message = Message(
-                    user_id=dt[0],
+                    user_from_id=first_user[0],
+                    user_to_id=second_user[0],
                     text=fake.text()[:127]
                 )
                 db.session.add(message)
-    except:
-        db.session.rollback()
     db.session.commit()
 
 
@@ -83,7 +83,7 @@ def tests(option):
 
 @manager.command
 def run():
-    socketio.run(app, host='0.0.0.0', port=5000)
+    socket_io.run(app, host='0.0.0.0', port=5000)
 
 
 if __name__ == '__main__':

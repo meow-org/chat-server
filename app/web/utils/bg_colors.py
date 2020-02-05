@@ -1,0 +1,19 @@
+colorBgList = [
+  'blue',
+  'blueGrey',
+  'brown',
+  'cyan',
+  'deepOrange',
+  'deepPurple',
+  'green',
+  'grey',
+  'indigo',
+  'lightBlue',
+  'lightGreen',
+  'lime',
+  'orange',
+  'pink',
+  'purple',
+  'red',
+  'teal'
+]
