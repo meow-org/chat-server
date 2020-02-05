@@ -1,13 +1,14 @@
 from flask import request, jsonify, Blueprint, session
 from flask_login import login_user, logout_user, current_user
 from ..utils.schemas import login as login_schema, register as register_schema, change_pass as change_pass_schema
-from ..utils.json_validate import json_validate
+from ..utils.decorators import json_validate
 from ..models import User, db
 from ..utils.mail import send_email_change_pass, send_registration_email
 from random import getrandbits
 from smtplib import SMTPException
+from ..config import AUTH_URL_PREFIX
 
-bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+bp = Blueprint('auth', __name__, url_prefix=AUTH_URL_PREFIX)
 
 
 @bp.route('/login', methods=['POST'])

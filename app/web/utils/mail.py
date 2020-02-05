@@ -1,6 +1,8 @@
+import os
 from flask import render_template
 from flask_mail import Message, Mail
-from config import mail_sender
+
+mail_sender = os.environ.get('MAIL_DEFAULT_SENDER')
 
 mail = Mail()
 

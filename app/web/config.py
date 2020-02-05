@@ -7,7 +7,11 @@ pwd = os.environ.get('POSTGRES_PASSWORD')
 db = os.environ.get('POSTGRES_DB')
 host = 'db'
 port = '5432'
-mail_sender = os.environ.get('MAIL_DEFAULT_SENDER')
+
+test_db = os.environ.get('POSTGRES_TEST_DB')
+
+AUTH_URL_PREFIX = '/api/auth'
+API_URL_PREFIX = '/api'
 
 
 class Config:
@@ -21,4 +25,14 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     SERVER_NAME = os.environ.get('SERVER_NAME')
+
+
+class TestConf:
+    TESTING = True
+    DEBUG = False
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    SQLALCHEMY_DATABASE_URI = 'postgres://%s:%s@%s:%s/%s' % (user, pwd, host, port, test_db)
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
