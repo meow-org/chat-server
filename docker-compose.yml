@@ -3,19 +3,21 @@ services:
   db:
     image: "postgres:9.6.5"
     volumes:
-      - "dbdata:/var/lib/postgresql/data"
+      - ./postgres:/docker-entrypoint-initdb.d
     env_file:
       - env_file
     ports:
       - "5432:5432"
   flaskapp:
-    build: .
+    tty: true
+    build:
+      context: ./app/
     env_file:
       - env_file
     ports:
       - "5000:5000"
     volumes:
-      - .:/opt/services/flaskapp/src
+      - "./app:/home/meow"
     depends_on:
       - db
 volumes:
