@@ -2,9 +2,9 @@ class Connection:
     connection: dict = dict()
 
     def set(self, user_id, sid):
-        if user_id in self.connection:
+        try:
             self.connection[user_id].append(sid)
-        else:
+        except KeyError:
             self.connection[user_id] = [sid]
 
     def get(self, user_id):

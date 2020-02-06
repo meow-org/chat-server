@@ -6,6 +6,10 @@ from flask import request, g, abort
 
 
 def authenticated_only(f):
+    '''
+    wrapper which disconnects instead of performing given task
+    if user is not authenticated
+    '''
     @functools.wraps(f)
     def wrapped(*args, **kwargs):
         print('current_user', current_user.username)
