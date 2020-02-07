@@ -23,6 +23,11 @@ manager.add_command('db', MigrateCommand)
 
 
 @manager.command
+def drop():
+    db.drop_all()
+
+
+@manager.command
 def seed():
     db.session.query(Message).delete()
     db.session.query(User).delete()
@@ -49,6 +54,8 @@ def seed():
                 )
                 db.session.add(message)
     db.session.commit()
+
+
 
 
 def run_tests():
