@@ -38,19 +38,15 @@ def register():
     form = request.json
     email_token = getrandbits(128)
     try:
-        send_registration_email(
-            to=form['email'],
-            email_token=email_token,
-            subject=form['username']
-        )
+        send_registration_email(to=form['email'],
+                                email_token=email_token,
+                                subject=form['username'])
     except SMTPException:
         return jsonify(message='Something went wrong for sent email'), 512
 
-    user = User(
-        username=form['username'],
-        email=form['email'],
-        email_token=email_token
-    )
+    user = User(username=form['username'],
+                email=form['email'],
+                email_token=email_token)
     user.set_password(form['password'])
     db.session.add(user)
     db.session.commit()
@@ -80,11 +76,9 @@ def change_password():
     if user is None:
         return jsonify(message="Email does not exist"), 400
     try:
-        send_email_change_pass(
-            to=data['email'],
-            email_token=user.email_token,
-            subject=user.username
-        )
+        send_email_change_pass(to=data['email'],
+                               email_token=user.email_token,
+                               subject=user.username)
     except SMTPException:
         return jsonify(message='Something went wrong'), 500
     return jsonify(success=True)
