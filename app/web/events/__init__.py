@@ -4,7 +4,7 @@ from flask_login import current_user
 from ..models import User, db
 from ..utils.connection import Connection
 import json
-from data_watcher_callables import get_users, get_current_user, get_notifications,
+from .data_watcher_callables import get_users, get_current_user, get_notifications,\
                                    get_user_msgs, set_msg
 
 connections = Connection()
@@ -50,7 +50,7 @@ def data_watcher(data):
     if data_type == '@SERVER/GET_USERS':
         get_users(data)
     elif data_type == '@SERVER/GET_CURRENT_USER':
-        get_current_user
+        get_current_user(data)
     elif data_type == '@SERVER/GET_NOTIFICATIONS':
         get_notifications(data)
     elif data_type == '@SERVER/GET_MESSAGES_FOR_USER':
