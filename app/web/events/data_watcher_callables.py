@@ -13,7 +13,7 @@ def get_users(data):
                  .offset(data_offset)
                  .limit(30)
                  .all()]
-    ###I couldn't find such case yet - but possibly filters etc should be applied stepwise
+    #TODO I couldn't find such case yet - but possibly filters etc should be applied stepwise
 
     count = User.query.filter(User.id != current_user.id, User.username.ilike(search)).count()
     users_get = action_create(action_type='@SERVER/GET_USERS', data=users,
