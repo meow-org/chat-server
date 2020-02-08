@@ -3,20 +3,20 @@ from flask import request
 from flask_login import current_user
 from ..models import User, db
 from ..utils.connection import Connection
-import json
-from .data_watcher_callables import get_users, get_current_user, get_notifications,\
-                                   get_user_msgs, set_msg
+from ..utils.decorators import authenticated_only
+from .event_callables import get_users, get_current_user, get_notifications,\
+                                   get_user_msgs, set_msg, action_create
 
 connections = Connection()
 
 socket_io = SocketIO(engineio_logger=True)
 
 
-def action_create(action_type, **kwargs):
-    return json.dumps({'forType': action_type, 'payload': kwargs})
+
 
 
 @socket_io.on('connect', namespace='/websocket/chat')
+@authenticated_only
 def connect_user():
     if current_user.id is not None:
         connections.set(current_user.id, request.sid)
@@ -29,6 +29,7 @@ def connect_user():
             emit('data', user_connect, broadcast=True)
 
 
+'''
 @socket_io.on('disconnect', namespace='/websocket/chat')
 def disconnect_user():
     if current_user.id is not None:
@@ -41,11 +42,13 @@ def disconnect_user():
             user_disconnect = action_create(action_type='@SERVER/USER_DISCONNECT', id=current_user.id)
             emit('data', user_disconnect, broadcast=True)
 
+'''
+#TODO I've commented out this part of code because as I remember we don't need it
 
 @socket_io.on('data', namespace='/websocket/chat')
+@authenticated_only
 def data_watcher(data):
-    #where from does this function get User???????????!
-    #data_type is some single thing?? I changed multiple if to if, elif... else
+    #TODO assumption that data_type can have only one value hasn't been checked
     data_type = data.get('type')
     if data_type == '@SERVER/GET_USERS':
         get_users(data)

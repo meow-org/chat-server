@@ -12,11 +12,14 @@ def authenticated_only(f):
     '''
     @functools.wraps(f)
     def wrapped(*args, **kwargs):
-        print('current_user', current_user.username)
-        if not current_user.is_authenticated:
+        try:
+            print('current_user', current_user.username)
+            if not current_user.is_authenticated:
+                disconnect()
+            else:
+                return f(*args, **kwargs)
+        except AttributeError:
             disconnect()
-        else:
-            return f(*args, **kwargs)
 
     return wrapped
 
