@@ -22,6 +22,7 @@ To set up the project, place the env_file file containing the following fields:
 * MAIL_USERNAME=YOUR NAME
 * MAIL_PASSWORD=XXXXXXXX
 * FLASK_ENV=development
+* BASE_URL_APP=http://localhost:3000
 
 ## Run development server
 

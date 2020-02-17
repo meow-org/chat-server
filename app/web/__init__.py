@@ -9,12 +9,6 @@ from .events import socket_io
 app = Flask(__name__)
 
 
-@app.route('/validate-email/<email_token>')
-def validate_email_page(email_token):
-    """ This is a catch all that is required for frontend router """
-    return render_template('/index.html')
-
-
 @app.errorhandler(Exception)
 def bad_request(error):
     """ All exception convert to json format """

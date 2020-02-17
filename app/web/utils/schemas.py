@@ -1,5 +1,3 @@
-import json
-
 # Validate params to response
 email = {
   "type": "string",
@@ -31,3 +29,4 @@ def build_validators(**kwargs):
 register = build_validators(email=email, password=password, username=username)
 login = build_validators(email=email, password=password)
 change_pass = build_validators(email=email)
+validate_new_pass = build_validators(password=password, passwordConfirmation=password, email=email)
