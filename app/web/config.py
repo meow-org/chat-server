@@ -13,6 +13,8 @@ test_db = os.environ.get('POSTGRES_TEST_DB')
 AUTH_URL_PREFIX = '/api/auth'
 API_URL_PREFIX = '/api'
 
+BASE_URL_APP = os.environ.get('BASE_URL_APP')
+
 
 class Config:
     SECRET_KEY = os.environ.get('APP_SECRET_KEY')
@@ -34,5 +36,3 @@ class TestConf:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     SQLALCHEMY_DATABASE_URI = 'postgres://%s:%s@%s:%s/%s' % (user, pwd, host, port, test_db)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-

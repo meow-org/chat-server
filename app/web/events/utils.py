@@ -1,3 +1,16 @@
+import json
+import datetime
+
+
+def default(o):
+    if isinstance(o, (datetime.date, datetime.datetime)):
+        return o.isoformat()
+
+
+def action_create(action_type, **kwargs):
+    return json.dumps({'forType': action_type, 'payload': kwargs}, default=default)
+
+
 class Connection:
     connection: dict = dict()
 
@@ -17,3 +30,6 @@ class Connection:
 
     def has_connections(self, user_id):
         return bool(self.connection.get(user_id))
+
+
+connections = Connection()
