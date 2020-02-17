@@ -14,7 +14,7 @@ socket_io = SocketIO(engineio_logger=True)
 def connect_user():
     connections.set(current_user.id, request.sid)
     user = User.query.get(current_user.id)
-    if user.online is not True:
+    if not user.online:
         user.set_online(True)
         db.session.add(user)
         db.session.commit()
@@ -26,7 +26,7 @@ def connect_user():
 def disconnect_user():
     user = User.query.get(current_user.id)
     connections.delete(current_user.id, request.sid)
-    if connections.has_connections(current_user.id) is False:
+    if not connections.has_connections(current_user.id):
         user.set_online(False)
         db.session.add(user)
         db.session.commit()
