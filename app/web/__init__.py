@@ -21,10 +21,8 @@ def bad_request(error):
     return jsonify(message=message), code
 
 
-"""init main application"""
-
-
 def create_app(conf=Config):
+    """ Init main application """
     app.config.from_object(conf)
     db.init_app(app)
     bcrypt.init_app(app)

@@ -19,24 +19,16 @@ bp = Blueprint('auth', __name__, url_prefix=AUTH_URL_PREFIX)
 @bp.route('/login', methods=['POST'])
 @json_validate(login_schema)
 def login():
-    '''
+    """
     checks if user is authenticated
     if not, checks password and if user is present in database
     otherwise returns JSON containing message 'Invalid username...'
     and error code 400
-    '''
+    """
     if current_user.is_authenticated:
         return jsonify(success=True)
     form = request.json
     user = User.query.filter_by(email=form['email']).first()
-    '''
-    if user is None or not user.check_password(form['password']):
-        return jsonify(message='Invalid username or password'), 400
-    login_user(user, remember=True)
-    return jsonify(success=True)
-    #TODO: Please confirm that it is ok to
-    #change this fragment to following one
-    '''
     if user and user.check_password(form['password']):
         login_user(user, remember=True)
         return jsonify(success=True)
@@ -53,10 +45,9 @@ def logout():
 @bp.route('/registration', methods=['POST'])
 @json_validate(register_schema)
 def register():
-    
     form = request.json
-    
-    #check if username or e-mail are already registered 
+
+    # check if username or e-mail are already registered
     current = User.query.filter(
         or_(User.email == form['email'], User.username == form['username'])
     ).first()
@@ -67,11 +58,11 @@ def register():
         else:
             return jsonify(message='Such email exists. Try to reset your password'), 400
     else:
-        '''
+        """
         if this user and e-mail are new - we assign email token, 
         send registration e-mail and create user in database
-        '''
-        email_token = getrandbits(128) #maybe it's better to use some more appropriate package in future
+        """
+        email_token = getrandbits(128)
         try:
             send_registration_email(to=form['email'],
                                     email_token=email_token,
@@ -95,15 +86,6 @@ def check_mail():
     email_token = data['email_token']
 
     user = User.query.filter_by(email_token=email_token).first()
-    '''
-    if user is None or not user.check_email_token(user.email_token):
-        return jsonify(message="Invalid email token"), 400
-    user.approve_email()
-    db.session.add(user)
-    db.session.commit()
-    return jsonify(success=True)
-    #changed to the following:
-    '''
     if user and user.check_email_token(user.email_token):
         user.approve_email()
         db.session.add(user)
@@ -111,32 +93,18 @@ def check_mail():
         return jsonify(success=True)
     else:
         return jsonify(message="Invalid email token"), 400
-        return jsonify(message="Invali")
-    
-    
+
 
 @bp.route('/change-password', methods=['POST'])
 @json_validate(change_pass_schema)
 def change_password():
-    '''
+    """
     checks the user provided e-mail, and if it is present in database - sends email
     otherwise returns error message Email does not exist, code 400
     if SMTP error occured, returns code 500, something went wrong
-    '''
+    """
     data = request.json
     user = User.query.filter_by(email=data['email']).first()
-    '''
-    if user is None:
-        return jsonify(message="Email does not exist"), 400
-    try:
-        send_email_change_pass(to=data['email'],
-                               email_token=user.email_token,
-                               subject=user.username)
-    except SMTPException:
-        return jsonify(message='Something went wrong'), 500
-    return jsonify(success=True)
-    #changed to the following:
-    '''
     if user:
         try:
             send_email_change_pass(to=data['email'],
@@ -152,11 +120,11 @@ def change_password():
 @bp.route('/validate-new-password', methods=['POST'])
 @json_validate(validate_new_pass_schema)
 def validate_new_password():
-    '''
+    """
     checks that password and its' confirmation match, otherwise returns error code 400
     checks if user and e-mail token are present in database, otherwise returns error code 400
     sets user password
-    '''
+    """
     data = request.json
     password = data['password']
     password_confirmation = data['passwordConfirmation']
@@ -164,15 +132,6 @@ def validate_new_password():
     if password != password_confirmation:
         return jsonify(message='Passwords must match'), 400
     user = User.query.filter_by(email=data['email']).first()
-    '''
-    if user is None or not user.check_email_token(email_token):
-        return jsonify(message="Invalid email token or user not exist"), 400
-    user.set_password(password)
-    db.session.add(user)
-    db.session.commit()
-    return jsonify(success=True)
-    #changed to the following:
-    '''
     if user and user.check_email_token(email_token):
         user.set_password(password)
         db.session.add(user)
