@@ -23,17 +23,32 @@ manager.add_command('db', MigrateCommand)
 
 
 @manager.command
+'''
+clear the database
+'''
 def drop():
     db.drop_all()
 
 
 @manager.command
 def seed():
+    '''
+    for testing purposes: clears all users and messages from db
+    creates fake users which exchange fake messages
+    '''
+    
+    
+    #delete all messages and users
     db.session.query(Message).delete()
     db.session.query(User).delete()
     db.session.commit()
 
-    for x in range(1, 60):
+    '''
+    create 60 fake users
+    use 'test1@test.com' as login
+    and 'test' as password
+    '''
+    for x in range(1, 61):
         user = User(
             username=fake.name(),
             email='test{}@test.com'.format(x),
@@ -44,15 +59,17 @@ def seed():
 
     users_id = db.session.query(User.id).all()
 
+    #for each pair of users send 5 fake messages
     for _ in range(5):
         for first_user in users_id:
             for second_user in users_id:
-                message = Message(
-                    user_from_id=first_user[0],
-                    user_to_id=second_user[0],
-                    text=fake.text()[:127]
-                )
-                db.session.add(message)
+                if first_user != second_user:
+                    message = Message(
+                        user_from_id=first_user[0],
+                        user_to_id=second_user[0],
+                        text=fake.text()[:127]
+                        )
+                       db.session.add(message)
     db.session.commit()
 
 
@@ -65,6 +82,9 @@ def run_tests():
 
 
 def report():
+    '''
+    run tests and report results
+    '''
     result = run_tests()
     if result.wasSuccessful():
         COV.stop()
