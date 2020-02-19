@@ -22,11 +22,12 @@ class User(UserMixin, db.Model):
     email_token: str = db.Column(db.String(128))
     online: bool = db.Column(db.Boolean, nullable=False, default=False)
     bg: str = db.Column(db.String(20))
-    img: str = db.Column(db.String(128), nullable=True)
+    img: str = db.Column(db.String(128))
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bg = random.choice(colorBgList)
+        self.img = ''
 
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')

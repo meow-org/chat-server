@@ -26,13 +26,13 @@ def data_watcher(data):
         users_get = action_create(action_type='@SERVER/GET_USERS', data=users,
                                   count=count, offset=bool(data_offset), search=data_search)
         emit('data', users_get)
-        
+
     elif data_type == '@SERVER/GET_CURRENT_USER':
         current = User.query.get(current_user.id).as_dict('id', 'username', 'img')
         current_user_get = action_create(current=current,
                                          action_type='@SERVER/GET_CURRENT_USER')
         emit('data', current_user_get)
-        
+
     elif data_type == '@SERVER/GET_NOTIFICATIONS':
         notifications = db.session.query(Message.user_from_id, func.count(Message.user_from_id)) \
             .filter(Message.user_to_id == current_user.id, Message.read == false()) \
@@ -41,7 +41,7 @@ def data_watcher(data):
         notifications_get = action_create(notifications=dict(notifications),
                                           action_type='@SERVER/GET_NOTIFICATIONS')
         emit('data', notifications_get)
-        
+
     elif data_type == '@SERVER/GET_MESSAGES_FOR_USER':
         data_user_id = data.get('payload').get('id') or ''
         messages = [c._asdict() for c in
@@ -55,7 +55,13 @@ def data_watcher(data):
         msg_user_get = action_create(data=messages, users={current_user.id: current, data_user_id: second},
                                      selectedUserId=data_user_id, action_type='@SERVER/GET_MESSAGES_FOR_USER')
         emit('data', msg_user_get)
-        
+        unread_message_count = Message.query.filter_by(user_from_id=data_user_id, user_to_id=current_user.id).update(
+            {'read': True})
+        db.session.commit()
+        if unread_message_count:
+            notification = action_create(action_type='@SERVER/UPDATE_NOTIFICATIONS', notifications={data_user_id: 0})
+            emit('data', notification)
+
     elif data_type == '@SERVER/SET_MESSAGE':
         data_user_id = data.get('payload').get('id')
         data_text = data.get('payload').get('text')
@@ -68,4 +74,10 @@ def data_watcher(data):
         emit('data', msg_set)
         if connections.has_connections(data_user_id):
             for connection in connections.get(data_user_id):
-                connection.emit('data', msg_set)
+                emit('data', msg_set, room=connection)
+
+    elif data_type == '@SERVER/SET_MESSAGE_READ':
+        message_id = data.get('payload').get('messageId')
+        Message.query.filter_by(id=message_id).update(
+            {'read': True})
+        db.session.commit()

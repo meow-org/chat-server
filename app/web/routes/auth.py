@@ -50,7 +50,7 @@ def register():
     # check if username or e-mail are already registered
     current = User.query.filter(
         or_(User.email == form['email'], User.username == form['username'])
-    ).first()
+    ).first().as_dict('username')
 
     if current:
         if current['username'] == form['username']:
