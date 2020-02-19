@@ -40,7 +40,7 @@ If you are starting the server for the first time, use the following commands
 
 Create new migration. Use if you change models.
 
-```docker-compose exec flaskapp python manage.py db upgrate``` - create tables, update tables
+```docker-compose exec flaskapp python manage.py db upgrade``` - create tables, update tables
 
 ```docker-compose exec flaskapp python manage.py db downgrade``` - drop tables
 
