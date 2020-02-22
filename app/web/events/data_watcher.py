@@ -45,10 +45,10 @@ def data_watcher(data):
     elif data_type == '@SERVER/GET_MESSAGES_FOR_USER':
         data_user_id = data.get('payload').get('id') or ''
         messages = [c._asdict() for c in
-                    db.session.query(Message.id, Message.text, Message.user_from_id, Message.user_to_id, Message.data)
+                    db.session.query(Message.id, Message.text, Message.user_from_id, Message.user_to_id, Message.date)
                         .filter(or_(and_(Message.user_from_id == current_user.id, Message.user_to_id == data_user_id),
                                     and_(Message.user_to_id == current_user.id, Message.user_from_id == data_user_id)))
-                        .order_by(Message.data)
+                        .order_by(Message.date)
                         .all()]
         current = User.query.get(current_user.id).as_dict('id', 'username', 'img', 'bg')
         second = User.query.get(data_user_id).as_dict('id', 'username', 'img', 'bg')

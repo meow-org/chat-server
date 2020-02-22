@@ -42,7 +42,7 @@ def json_validate(schema=None, force=False):
 
                 return abort(400, e.message)
 
-            g.data = data
+            g.data = data #TODO strange fragment... what does it mean? what is "g"?
             return f(*args, **kwargs)
 
         return decorated_function
