@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
     email_token: str = db.Column(db.String(128))
     online: bool = db.Column(db.Boolean, nullable=False, default=False)
     bg: str = db.Column(db.String(20))
-    img: str = db.Column(db.String(128))
+    img: str = db.Column(db.String(128),nullable=True,default=False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
