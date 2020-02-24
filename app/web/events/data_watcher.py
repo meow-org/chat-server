@@ -14,13 +14,27 @@ def data_watcher(data):
         data_search = data.get('payload').get('search') or ''
         data_offset = data.get('payload').get('offset') or 0
         search = "%{}%".format(data_search)
+        
+        last_messages_subquery = db.session.query(func.max(Message.date))\
+            .filter(
+                or_(
+                    and_(Message.user_from_id == User.id,Message.user_to_id == current_user.id),
+                    and_(Message.user_to_id == User.id,Message.user_from_id == current_user.id)
+                   )
+            ).subquery()
+                
+        users_query = db.session.query(User.id, User.username, User.online, User.bg, User.img)\
+            .order_by(last_messages_subquery)\
+            .offset(data_offset)\
+            .limit(30)\
+            .all()
 
-        users = [c._asdict() for c in
-                 db.session.query(User.id, User.username, User.online, User.bg, User.img)
-                     .filter(User.id != current_user.id, User.username.ilike(search))
-                     .offset(data_offset)
-                     .limit(30)
-                     .all()]
+        users = [c._asdict() for c in users_query]
+        #         db.session.query(User.id, User.username, User.online, User.bg, User.img)
+        #             .filter(User.id != current_user.id, User.username.ilike(search))
+        #             .offset(data_offset)
+        #             .limit(30)
+        #             .all()]
 
         count = User.query.filter(User.id != current_user.id, User.username.ilike(search)).count()
         users_get = action_create(action_type='@SERVER/GET_USERS', data=users,
