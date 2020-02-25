@@ -21,20 +21,24 @@ def data_watcher(data):
                     and_(Message.user_from_id == User.id,Message.user_to_id == current_user.id),
                     and_(Message.user_to_id == User.id,Message.user_from_id == current_user.id)
                    )
-            ).subquery()
+            ).as_scalar()
                 
         users_query = db.session.query(User.id, User.username, User.online, User.bg, User.img)\
-            .order_by(last_messages_subquery)\
+            .filter(User.id != current_user.id)\
+            .order_by(last_messages_subquery.desc())\
             .offset(data_offset)\
             .limit(30)\
             .all()
 
         users = [c._asdict() for c in users_query]
-        #         db.session.query(User.id, User.username, User.online, User.bg, User.img)
-        #             .filter(User.id != current_user.id, User.username.ilike(search))
-        #             .offset(data_offset)
-        #             .limit(30)
-        #             .all()]
+        '''
+        users = [c._asdict() for c in         
+            db.session.query(User.id, User.username, User.online, User.bg, User.img)
+                     .filter(User.id != current_user.id, User.username.ilike(search))
+                     .offset(data_offset)
+                     .limit(30)
+                     .all()]
+        '''
 
         count = User.query.filter(User.id != current_user.id, User.username.ilike(search)).count()
         users_get = action_create(action_type='@SERVER/GET_USERS', data=users,
