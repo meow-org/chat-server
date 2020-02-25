@@ -31,14 +31,6 @@ def data_watcher(data):
             .all()
 
         users = [c._asdict() for c in users_query]
-        '''
-        users = [c._asdict() for c in         
-            db.session.query(User.id, User.username, User.online, User.bg, User.img)
-                     .filter(User.id != current_user.id, User.username.ilike(search))
-                     .offset(data_offset)
-                     .limit(30)
-                     .all()]
-        '''
 
         count = User.query.filter(User.id != current_user.id, User.username.ilike(search)).count()
         users_get = action_create(action_type='@SERVER/GET_USERS', data=users,
