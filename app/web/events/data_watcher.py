@@ -14,13 +14,23 @@ def data_watcher(data):
         data_search = data.get('payload').get('search') or ''
         data_offset = data.get('payload').get('offset') or 0
         search = "%{}%".format(data_search)
+        
+        last_messages_subquery = db.session.query(func.max(Message.date))\
+            .filter(
+                or_(
+                    and_(Message.user_from_id == User.id,Message.user_to_id == current_user.id),
+                    and_(Message.user_to_id == User.id,Message.user_from_id == current_user.id)
+                   )
+            ).as_scalar()
+                
+        users_query = db.session.query(User.id, User.username, User.online, User.bg, User.img)\
+            .filter(User.id != current_user.id)\
+            .order_by(last_messages_subquery.desc())\
+            .offset(data_offset)\
+            .limit(30)\
+            .all()
 
-        users = [c._asdict() for c in
-                 db.session.query(User.id, User.username, User.online, User.bg, User.img)
-                     .filter(User.id != current_user.id, User.username.ilike(search))
-                     .offset(data_offset)
-                     .limit(30)
-                     .all()]
+        users = [c._asdict() for c in users_query]
 
         count = User.query.filter(User.id != current_user.id, User.username.ilike(search)).count()
         users_get = action_create(action_type='@SERVER/GET_USERS', data=users,
@@ -45,10 +55,10 @@ def data_watcher(data):
     elif data_type == '@SERVER/GET_MESSAGES_FOR_USER':
         data_user_id = data.get('payload').get('id') or ''
         messages = [c._asdict() for c in
-                    db.session.query(Message.id, Message.text, Message.user_from_id, Message.user_to_id, Message.data)
+                    db.session.query(Message.id, Message.text, Message.user_from_id, Message.user_to_id, Message.date)
                         .filter(or_(and_(Message.user_from_id == current_user.id, Message.user_to_id == data_user_id),
                                     and_(Message.user_to_id == current_user.id, Message.user_from_id == data_user_id)))
-                        .order_by(Message.data)
+                        .order_by(Message.date)
                         .all()]
         current = User.query.get(current_user.id).as_dict('id', 'username', 'img', 'bg')
         second = User.query.get(data_user_id).as_dict('id', 'username', 'img', 'bg')
