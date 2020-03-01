@@ -1,8 +1,8 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, jsonify, send_from_directory
 from werkzeug.exceptions import HTTPException
 from .config import Config
 from .models import db, bcrypt, login_manager
-from .routes import auth_bp
+from .routes import auth_bp, upload_bp
 from .utils.mail import mail
 from .events import socket_io
 
@@ -29,5 +29,6 @@ def create_app(conf=Config):
     mail.init_app(app)
     socket_io.init_app(app, cors_allowed_origins="*")
     app.register_blueprint(auth_bp)
+    app.register_blueprint(upload_bp)
     login_manager.init_app(app)
     return app
