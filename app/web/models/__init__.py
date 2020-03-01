@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
     email_token: str = db.Column(db.String(128))
     online: bool = db.Column(db.Boolean, nullable=False, default=False)
     bg: str = db.Column(db.String(20))
-    img: str = db.Column(db.String(128),nullable=True,default=False)
+    img: str = db.Column(db.String(128), nullable=True, default=False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -59,7 +59,7 @@ def load_user(user_id):
 @dataclass
 class Message(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
-    text: str = db.Column(db.String(128), nullable=False)
+    text: str = db.Column(db.Text(), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     read = db.Column(db.Boolean, nullable=False, default=False)
     user_from_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

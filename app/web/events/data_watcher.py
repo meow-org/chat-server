@@ -14,7 +14,7 @@ def data_watcher(data):
         data_search = data.get('payload').get('search') or ''
         data_offset = data.get('payload').get('offset') or 0
         search = "%{}%".format(data_search)
-        
+
         last_messages_subquery = db.session.query(func.max(Message.date))\
             .filter(
                 or_(
@@ -22,9 +22,8 @@ def data_watcher(data):
                     and_(Message.user_to_id == User.id,Message.user_from_id == current_user.id)
                    )
             ).as_scalar()
-                
         users_query = db.session.query(User.id, User.username, User.online, User.bg, User.img)\
-            .filter(User.id != current_user.id)\
+            .filter(User.id != current_user.id, User.username.ilike(search))\
             .order_by(last_messages_subquery.desc())\
             .offset(data_offset)\
             .limit(30)\

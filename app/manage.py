@@ -65,7 +65,7 @@ def seed():
                     message = Message(
                         user_from_id=first_user[0],
                         user_to_id=second_user[0],
-                        text=fake.text()[:127]
+                        text=fake.text()
                     )
                     db.session.add(message)
     db.session.commit()
