@@ -4,7 +4,7 @@ import datetime
 
 def default(o):
     if isinstance(o, (datetime.date, datetime.datetime)):
-        return o.isoformat()
+        return o.strftime('%Y-%m-%d %H:%M')
 
 
 def action_create(action_type, **kwargs):

@@ -16,3 +16,4 @@ sqlalchemy
 Faker
 Flask-Testing
 coverage
+Pillow

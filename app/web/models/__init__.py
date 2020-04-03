@@ -22,11 +22,12 @@ class User(UserMixin, db.Model):
     email_token: str = db.Column(db.String(128))
     online: bool = db.Column(db.Boolean, nullable=False, default=False)
     bg: str = db.Column(db.String(20))
-    img: str = db.Column(db.String(128), nullable=True)
+    img: str = db.Column(db.String(128), nullable=True, default=False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bg = random.choice(colorBgList)
+        self.img = ''
 
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -58,15 +59,15 @@ def load_user(user_id):
 @dataclass
 class Message(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
-    text: str = db.Column(db.String(128), nullable=False)
-    data = db.Column(db.DateTime, nullable=False)
+    text: str = db.Column(db.Text(), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
     read = db.Column(db.Boolean, nullable=False, default=False)
     user_from_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user_to_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.data = datetime.now()
+        self.date = datetime.now()
 
     def is_read(self):
         self.read = True

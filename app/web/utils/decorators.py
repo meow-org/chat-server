@@ -42,7 +42,6 @@ def json_validate(schema=None, force=False):
 
                 return abort(400, e.message)
 
-            g.data = data
             return f(*args, **kwargs)
 
         return decorated_function

@@ -11,8 +11,10 @@ port = '5432'
 test_db = os.environ.get('POSTGRES_TEST_DB')
 
 AUTH_URL_PREFIX = '/api/auth'
+UPLOAD_URL_PREFIX = '/api/upload'
 API_URL_PREFIX = '/api'
-
+UPLOAD_FOLDER_SOURCE = 'static/upload/documents/source'
+UPLOAD_FOLDER_IMAGE_MINIMIZATION = 'static/upload/documents/minimization'
 BASE_URL_APP = os.environ.get('BASE_URL_APP')
 
 
